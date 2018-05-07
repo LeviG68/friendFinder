@@ -1,11 +1,25 @@
-let friendData = require('../data/friend.js');
+
+
+var express = require('express');
+var bodyParser = require('body-parser');
+var path = require('path');
+
+var app = express();
+
+// var port = process.env.PORT || 3000;
+
+app.use(bodyParser.urlencoded({extended: true }));
+app.use(bodyParser.json());
+
+var friendData = require('../../app/data/friends.js');
+  console.log(friendData);
 
 module.exports = function (app) {
   app.get('/api/friends', function(req, res) {
     res.json(friendData);
   })
 
-  app.post('/api/friends', function (req, res) {
+  app.post('/api/friends', function(req, res) {
     var newFriend = req.body;
 
     for(var i = 0; i < newFriend.scores.length; i++) {

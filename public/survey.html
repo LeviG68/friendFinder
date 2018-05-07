@@ -3,10 +3,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- Latest compiled and minified CSS -->
+		<!-- Latest compiled and minified CSS -->
+			<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <link href="https://fonts.googleapis.com/css?family=Comfortaa|PT+Mono" rel="stylesheet">    
+	    
     <title>Survey</title>
-  </head>
+	</head>
+	
   <body>
     <h1>Survey Questions</h1>
       <hr>
@@ -176,7 +180,85 @@
 						</select>
 					</div>
 				</fieldset>
-        <button type="submit" class="btn btn-default">Submit</button>
-       </form>
+				<button type="submit" id="submit" class="btn btn-default">Submit</button>
+			 </form>
+
+			<!-- modal -->
+			<div id="resultsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Your Soul Friend is:</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="matchName"></h4>
+                    <img id="matchImg" src="" alt="" height="350" width="300">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-danger" id="closeModal" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+		</div>
+		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+		<script>
+		// URL of the website
+		var currentURL = window.location.origin;
+		// capture the form inputs
+		$('#submit').on('click', function(event){
+			event.preventDefault();
+			if (($('#name').val().trim() !=='') && ($('#image').val().trim() !=='')) {
+
+				var userData = {
+					name: $('#name').val(),
+					image: $('#image').val(),
+					scores: [ $('#01').val(), 
+					$('#02').val(), 
+					$('#03').val(),
+					$('#04').val(), 
+					$('#05').val(), 
+					$('#06').val(), 
+					$('#07').val(), 
+					$('#08').val(), 
+					$('#09').val(), 
+					$('#10').val(),
+				]
+				}
+				console.log(userData);
+
+				$.post(currentURL + "/api/friends", userData, function (data) {
+
+					$('#matchName').text(data.name);
+					$('#matchImg').attr("src", data.photo);
+					$("#resultsModal").modal('toggle');
+
+					$('#name').val('');
+					$('#image').val('');
+				});
+			} else if ($('#01').val() === 1) {
+				$(".modal-title").text("Missing Information!");
+				$('.modal-body').html('<h3> Please Complete the form before submitting</h3>');
+				$("#resultsModal").modal('toggle');
+			}
+			return false;
+		});
+		$('#closeModal').click(function (){
+			$.get('/', function (req, res) {
+				location.replace(res);
+			})
+		});
+		</script>
   </body>
 </html>
