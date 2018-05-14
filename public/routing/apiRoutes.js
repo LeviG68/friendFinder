@@ -34,13 +34,13 @@ module.exports = function (app) {
       } 
     }
 
-    var diffArray = [];
+    var differencesArray = [];
 
     for(var i = 0; i < friendData.length; i++) {
-      var compairedFriend = friendData[1];
+      var compairedFriend = friendData[i];
       var totalDifference = 0;
       for (var k = 0; k < compairedFriend.scores.length; k++) {
-        var difference1Score = math.abs(comparedFriend.scores[k] = newFriend.scores[k]);
+        var difference1Score = Math.abs(compairedFriend.scores[k] = newFriend.scores[k]);
         totalDifference += difference1Score;
       }
       differencesArray[i] = totalDifference;
