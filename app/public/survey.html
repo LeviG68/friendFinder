@@ -189,30 +189,48 @@
 				</section>
 
 				<br>
-				<button type="submit" id="submit" class="btn btn-default">Submit</button>
-			 </form>
+			<section>
+				<button type="button" class="btn btn-primary btn-lg btn-block" id="submit">Submit</button>
+			</section>
+			</form>
 
 			<!-- modal -->
-			<div id="resultsModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+			<!-- <div id="resultsModal" class="modal fade" role="dialog">
+        <div class="modal-dialog"> -->
 
-            <!-- Modal content-->
-            <div class="modal-content">
+						<!-- Modal content-->
+						
+						<div class="modal" tabindex="-1" role="dialog" id="bestFriendModal">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title"></h3>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										<p id="friendname"></p>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									</div>
+							</div>
+            <!-- <div class="modal-content" id='bestFriendModal'>
                 <div class="modal-header">
-                    <h5 class="modal-title">Your Soul Friend is:</h5>
+                    <h5 class="modal-title">Your  Friend is:</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <h4 id="matchName"></h4>
-                    <img id="matchImg" src="" alt="" height="350" width="300">
+                    <h4 id="name"></h4>
+                    <img id="image" src="" alt="" height="350" width="300">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-sm btn-danger" id="closeModal" data-dismiss="modal">Close</button>
                 </div>
-            </div>
-
+            </div> -->
         </div>
 		</div>
 		
@@ -222,7 +240,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
-		<script>"text/javascript">
+		<script type="text/javascript">
 		
 		$("#submit").on('click', function() {
 			event.preventDefault();
@@ -243,33 +261,51 @@
 
 			if (validation()) {
 				let answers = [($('#q1').val()), $('#q2').val(), $('#q3').val(), $('#q4').val(), $('#q5').val(), $('#q6').val(), $('#q7').val(), $('#q8').val(), $('#q9').val(), $('#q10').val()];
+
+				answers = answers.filter(answer => answer !== "Select an Option" );	
+				// "Select an Option"
 				let newUser = {
 					name: $('#name').val().trim(),
-					picture: $('#image').val().trim(),
+					photo: $('#image').val().trim(),
 					scores: answers
 				}
 				$.ajax({
 					method: "POST",
 					url: "/api/friends",
-					type: "application/json",
+					data: JSON.stringify(newUser),
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
 					success: function(response) {
 						console.log(response);
-						var friendPic = response.bestFriend.picture;
+						var friendPic = response.bestFriend.photo;
 						$('.model-title').text("Your match is....");
 						$('.model-body').remove('img');
 
-						var image = $('<img class= "modal-content" id="friendPic" src="' + friendPic + '"alt="best friend picture" />');
+						var $image = $('<img class= "modal-content" id="friendPic" src="' + friendPic + '"alt="best friend picture" />');
 
 						$('.modal-body').append($image);
 
-						$('#friendName').text(response.bestFriend.name);
+						$('#friendname').text(response.bestFriend.name);
 
 						$('#bestFriendModal').modal('show');
 						console.log($image);
 					}
 				});
+			} else {
+				$('.modal.title').text("We see why you have no friends... there was an error");
+				$('.modal-body').text("Please fill out all questions before submitting");
+				$('#bestFriendModal').modal('show');
 			}
-		})
+			reset();
+		});
+	
+		function reset() {
+			$('#name').val('');
+			$('#picture').val('');
+			$("select").each(function() {
+				this.selectedIndex = 0 });
+			};
+
 		</script>
   </body>
 </html>
